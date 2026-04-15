@@ -11,9 +11,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://v20251104.heydust-b05.workers.dev
     steps:
       - uses: actions/checkout@v4
-
       - name: Deploy to Workers
         uses: cloudflare/wrangler-action@v3
         with:
