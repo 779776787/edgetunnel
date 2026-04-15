@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://v20251104.heydust-b05.workers.dev
+      url: https://daili.heydust-b05.workers.dev
     steps:
       - uses: actions/checkout@v4
       - name: Deploy to Workers
