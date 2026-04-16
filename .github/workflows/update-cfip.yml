@@ -2,7 +2,7 @@ name: Update CF Optimized IPs
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # 每 6 小时
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
