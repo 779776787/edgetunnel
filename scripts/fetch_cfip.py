@@ -99,37 +99,33 @@ for isp in ['CM', 'CU', 'CT']:
     except Exception as e:
         print(f'{ISP_NAME.get(isp, isp)} 获取失败: {e}', file=sys.stderr)
 
-# 2. 额外 IP 列表源
-extra_ips = {}  # ip -> source_name
-print(f'\n--- 额外 IP 列表源 ---')
-for name, url in IP_LIST_URLS.items():
-    ips = fetch_ip_list(name, url)
-    for ip in ips:
-        if ip not in extra_ips:
-            extra_ips[ip] = name
+# 2. 额外 IP 列表源（暂时禁用，GitHub Actions 上连通性不稳定）
+# extra_ips = {}
+# print(f'\n--- 额外 IP 列表源 ---')
+# for name, url in IP_LIST_URLS.items():
+#     ips = fetch_ip_list(name, url)
+#     for ip in ips:
+#         if ip not in extra_ips:
+#             extra_ips[ip] = name
+#
+# for name, url in CSV_URLS.items():
+#     ips = fetch_csv(name, url)
+#     for ip in ips:
+#         if ip not in extra_ips:
+#             extra_ips[ip] = name
+#
+# for ip, src_name in extra_ips.items():
+#     if ip not in all_ips:
+#         all_ips[ip] = {'ip': ip, 'colo': 'Unknown', 'latency': 0, 'source': src_name}
 
-for name, url in CSV_URLS.items():
-    ips = fetch_csv(name, url)
-    for ip in ips:
-        if ip not in extra_ips:
-            extra_ips[ip] = name
-
-# 将额外 IP 合并到 all_ips（如果不存在的话，记录来源）
-for ip, src_name in extra_ips.items():
-    if ip not in all_ips:
-        all_ips[ip] = {'ip': ip, 'colo': 'Unknown', 'latency': 0, 'source': src_name}
-
-print(f'\n合并后总计: {len(all_ips)} 个唯一 IP')
+# print(f'\n合并后总计: {len(all_ips)} 个唯一 IP')
 
 # 3. 按地区分组
 grouped = {}
-ungrouped = []
 for item in all_ips.values():
     colo = item.get('colo', 'Unknown')
     if colo in ALLOWED_COLOS:
         grouped.setdefault(colo, []).append(item)
-    else:
-        ungrouped.append(item)
 
 # 4. 生成结果
 bjt = datetime.now(timezone(timedelta(hours=8)))
@@ -148,15 +144,6 @@ for colo in sorted(grouped.keys()):
                 seen.add(key)
                 lines.append(f'{key}#{flag}')
 
-# 再输出无地区标签的（额外源补充的 IP）
-for item in ungrouped:
-    src = item.get('source', 'CF')
-    for port in PORTS:
-        key = f'{item["ip"]}:{port.strip()}'
-        if key not in seen:
-            seen.add(key)
-            lines.append(f'{key}#{src}')
-
 output = '\n'.join(lines)
 
 os.makedirs('public', exist_ok=True)
@@ -166,8 +153,7 @@ with open('public/cfip.txt', 'w', encoding='utf-8') as f:
 # 输出摘要
 print(f'\n=== 最终结果 ===')
 print(f'唯一 IP: {len(all_ips)} 个')
-print(f'有地区标签: {sum(len(v) for v in grouped.values())} 个 ({", ".join(sorted(grouped.keys()))})')
-print(f'无地区标签: {len(ungrouped)} 个')
+print(f'覆盖地区: {", ".join(sorted(grouped.keys()))}')
 print(f'输出条目: {len(lines)} 条')
 print(f'端口: {", ".join(p.strip() for p in PORTS)}')
 print(f'\n{output}')
