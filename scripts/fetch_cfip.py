@@ -142,12 +142,11 @@ for colo in sorted(grouped.keys()):
     ips.sort(key=lambda x: x.get('latency', 9999))
     flag = COLO_FLAG.get(colo, colo)
     for item in ips[:MAX_PER_COLO]:
-        src = item.get('source', '')
         for port in PORTS:
             key = f'{item["ip"]}:{port.strip()}'
             if key not in seen:
                 seen.add(key)
-                lines.append(f'{key}#{flag}{src}[{port.strip()}]')
+                lines.append(f'{key}#{flag}')
 
 # 再输出无地区标签的（额外源补充的 IP）
 for item in ungrouped:
@@ -156,7 +155,7 @@ for item in ungrouped:
         key = f'{item["ip"]}:{port.strip()}'
         if key not in seen:
             seen.add(key)
-            lines.append(f'{key}#CF|{src}[{port.strip()}]')
+            lines.append(f'{key}#{src}')
 
 output = '\n'.join(lines)
 
