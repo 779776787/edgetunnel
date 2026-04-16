@@ -8,10 +8,10 @@ MAX_PER_COLO = int(os.environ.get('MAX_PER_COLO', '3'))
 ALLOWED_COLOS = {'HKG', 'NRT', 'KIX', 'ICN', 'SIN', 'LAX', 'SJC', 'SEA', 'ORD', 'IAD', 'LHR'}
 
 COLO_FLAG = {
-    'HKG': '🇭🇰HK', 'NRT': '🇯🇵JP', 'KIX': '🇯🇵JP',
-    'ICN': '🇰🇷KR', 'SIN': '🇸🇬SG',
-    'LAX': '🇺🇸LA', 'SJC': '🇺🇸SJ', 'SEA': '🇺🇸SE', 'ORD': '🇺🇸CH', 'IAD': '🇺🇸DC',
-    'LHR': '🇬🇧UK',
+    'HKG': 'HK', 'NRT': 'JP', 'KIX': 'JP',
+    'ICN': 'KR', 'SIN': 'SG',
+    'LAX': 'US-LA', 'SJC': 'US-SJ', 'SEA': 'US-SE', 'ORD': 'US-CH', 'IAD': 'US-DC',
+    'LHR': 'UK',
 }
 
 ISP_NAME = {'CM': '移动', 'CU': '联通', 'CT': '电信'}
@@ -133,7 +133,7 @@ for item in all_ips.values():
 
 # 4. 生成结果
 bjt = datetime.now(timezone(timedelta(hours=8)))
-lines = [f'# 更新时间: {bjt.strftime("%Y-%m-%d %H:%M")} 北京时间  |  端口: {",".join(p.strip() for p in PORTS)}']
+lines = []
 seen = set()
 
 # 先输出有地区标签的
@@ -168,6 +168,6 @@ print(f'\n=== 最终结果 ===')
 print(f'唯一 IP: {len(all_ips)} 个')
 print(f'有地区标签: {sum(len(v) for v in grouped.values())} 个 ({", ".join(sorted(grouped.keys()))})')
 print(f'无地区标签: {len(ungrouped)} 个')
-print(f'输出条目: {len(lines) - 1} 条')
+print(f'输出条目: {len(lines)} 条')
 print(f'端口: {", ".join(p.strip() for p in PORTS)}')
 print(f'\n{output}')
